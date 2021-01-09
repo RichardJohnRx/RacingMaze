@@ -288,7 +288,7 @@ class Maze {
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
 				alert("Bravo ! Vous avez terminé la partie ! ヾ(≧▽≦*)o");
-				alert('Vous allez passé au niveau suivant,');
+				alert('Vous allez passé au niveau suivant,,');
 				if(maze.cols == 4){
 					document.getElementById('menuIntermediaire').checked=true;
 				    maze.cols = 8;
