@@ -8,14 +8,18 @@
 		<title>htmlMaze</title>
 	</head>
 	<body onload="onLoad();" >
-		<header>Racing Maze</header>
+		<header style="text-align: center;margin-left: 17em;">Racing Maze</header>
 		<canvas id="mainForm"
 			>Votre navigateur ne supporte pas l'application...</canvas
 		>
-		<!--Facile : Columns=4  &&  Rows=4  &&  Chests=3 -->
-		<!--Intermediaire : Columns=8  &&  Rows=8  &&  Chests=5 -->
-		<!--Difficile : Columns=11  &&  Rows=11  &&  Chests=7 -->
-		<div class="container" style="display:flex;">
+
+		<div class="container">
+			<div id="typePartie">
+				<input id="typePublique" type="radio" name="rtoggle" value="Publique" />
+				<label for="menuFacile">Publique</label>
+				<input id="typePrivee" type="radio" name="rtoggle" value="Privee" />
+				<label for="menuFacile">Privée</label>
+			</div>
 			<div id="niveauJeu">
 				<input id="menuFacile" type="radio" name="rtoggle" value="Facile" />
 				<label for="menuFacile">Facile</label>
@@ -24,13 +28,9 @@
 				<input id="menuDifficile" type="radio" name="rtoggle" value="Difficile" />
 				<label for="menuDifficile">Difficile</label>
 			</div>
+			<div>Time left = <span id="timer"></span>
 			<div class="settings">
-				<!--<label for="cols">Columns:</label>
-				<input id="cols" type="text" size="5" value="3" /><br />
-				<label for="rows">Rows:</label>
-				<input id="rows" type="text" size="5" value="3" /><br />
-				<label for="rows">Chests:</label>
-				<input id="chests" type="text" size="5" value="3" /><br />-->
+				
 				<input id="generate" type="button" value="Generate" />
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 			<div id="down" class="down">&#8681;</div>
 			<div id="left" class="left">&#8678;</div>
 		</div>
-		<footer style="">
+		<footer >
 			&copy; 2021
 			<a href="#"
 				>LP CIASIE</a

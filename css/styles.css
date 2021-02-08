@@ -109,3 +109,20 @@ footer > a:hover {
 		grid-template-rows: max-content max-content max-content max-content;
 	}
 }
+
+#typePartie{
+	border: 1px solid black;
+}
+
+#niveauJeu{
+	border: 1px solid red;
+}
+
+/*
+.controls{
+	display: none;
+}
+#mainForm{
+	display: none;
+}
+*/

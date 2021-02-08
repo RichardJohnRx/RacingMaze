@@ -6,6 +6,11 @@ let mazeWidth;
 let player;
 // Variable pour stocker tous les coffres
 let chests = [];
+// Variables pour le chronometre 
+let secondes = 0;
+let minutes = 0;
+let on = false;
+let reset = false;
 
 class Player {
 	constructor() {
@@ -54,6 +59,7 @@ class Maze {
 	}
 
 	generate() {
+		
 		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe
 		chests = [];
 
@@ -167,6 +173,11 @@ class Maze {
 			chests.push(this.cells[randomCol][randomRow]);
 		}
 		this.redraw();
+
+		alert("Le jeu commence !! n'oubliez pas le temps");
+		
+		
+	
 	}
 
 	hasUnvisited() {
@@ -253,7 +264,7 @@ class Maze {
 			// S'il reste encore des coffres, on affiche combien il en reste
 			if (chests.length > 0) {
 				alert(
-					"Il manque " +
+					"Il vous manque " +
 						chests.length +
 						" coffres pour pouvoir sortir du labyrinthe."
 				);
@@ -411,9 +422,7 @@ function onKeyDown(event) {
 	}
 	maze.redraw();
 }
-
 function onLoad() {
-	alert('hello');
 	canvas = document.getElementById("mainForm");
 	ctx = canvas.getContext("2d");
 
@@ -431,6 +440,30 @@ function onLoad() {
 		maze = new Maze(col, row, size, chest);
 	}
 
+	//La partie qui va chronometrée le jeu (TIMER) : 
+	
+	document.getElementById('timer').innerHTML = 005 + ":" + 01;
+	alert('GO !');
+	startTimer();
+	function startTimer() {
+		var presentTime = document.getElementById('timer').innerHTML;
+		var timeArray = presentTime.split(/[:]+/);
+		var m = timeArray[0];
+		var s = checkSecond((timeArray[1] - 1));
+		if(s==59){m=m-1}
+		
+		document.getElementById('timer').innerHTML =
+			m + ":" + s;
+		console.log(m)
+		setTimeout(startTimer, 1000);
+	}
+
+	function checkSecond(sec) {
+		if (sec < 10 && sec >= 0) {sec = "0" + sec}; 
+		if (sec < 0) {sec = "59"};
+		return sec;
+	}
+	// Les evenements :
 	document.addEventListener("keydown", onKeyDown);
 	document.getElementById("generate").addEventListener("click", onClick);
 	document.getElementById("up").addEventListener("click", onControlClick);
