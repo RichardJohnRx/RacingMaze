@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+        <meta charset="UTF-8" />
+        <script src="scriptCR.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Creation d'une partie</title>
+        <style>
+            /* div{
+                text-align: center;
+                margin-top:0.6em;
+                border: 1px solid black;
+            } */
+        </style>
+	</head>
+	<body>
+        <h1>Créer Partie</h1>
+        <label for="nomPartie">Nom : </label><input id="nomPartie" type="text"><br>
+        <label for="nomPartie">Avatar : </label> 
+        <div id="typePartie">
+            <input id="partiePublique" type="radio" name="rtoggle" value="partiePublique" />
+            <label for="partiePublique">Publique</label>
+            <input id="partiePrivee" type="radio" name="rtoggle" value="partiePrivee" />
+            <label for="partiePrivee">Privée</label>
+        </div>
+        <div id="niveauJeu" style="display: none;">
+            <input id="menuFacile" type="radio" name="rtoggle" value="Facile" />
+            <label for="menuFacile">Facile</label>
+            <input id="menuIntermediaire" type="radio" name="rtoggle" value="Intermediaire" />
+            <label for="menuIntermediaire">Intermédiaire</label>
+            <input id="menuDifficile" type="radio" name="rtoggle" value="Difficile" />
+            <label for="menuDifficile">Difficile</label>
+        </div>
+        <div id="infoPartiePub" style="display: none;">
+            juste pour le test (publique)
+        </div>
+        <div id="infoPartiePriv" style="display: none;">
+            <label for="codeAcces">Code d'acces : </label><input id="codeAcces" type="text">
+        </div>
+
+        <input style="display: none;" id="creerPartie" type="submit" value="Creer"/>
+	</body>
+</html>
+
+

@@ -6,11 +6,9 @@ let mazeWidth;
 let player;
 // Variable pour stocker tous les coffres
 let chests = [];
-// Variables pour le chronometre 
-let secondes = 0;
-let minutes = 0;
-let on = false;
-let reset = false;
+// Variable pour stocker le nombre de coffres récupérés par l'utilisateur (de base aucun coffre récupéré donc 0)
+let chestsFound = 0;
+
 
 class Player {
 	constructor() {
@@ -59,10 +57,10 @@ class Maze {
 	}
 
 	generate() {
-		
+		alert('appel de generate ?');
 		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe
 		chests = [];
-
+		chestsFound = 0;
 		
 		mazeHeight = this.rows * this.cellSize;
 		mazeWidth = this.cols * this.cellSize;
@@ -172,12 +170,10 @@ class Maze {
 			// On pousse la position du coffre dans le tableau dédié (variable globale)
 			chests.push(this.cells[randomCol][randomRow]);
 		}
-		this.redraw();
-
-		alert("Le jeu commence !! n'oubliez pas le temps");
-		
-		
-	
+		// On affiche le nombre total de coffres à l'écran (pour indiquer l'avancée de l'utilisateur)
+        document.getElementById("totalChests").innerHTML =
+            chestsFound + " / " + chests.length + " coffres trouvés";
+		this.redraw();		
 	}
 
 	hasUnvisited() {
@@ -252,7 +248,7 @@ class Maze {
 				this.cellSize - 4
 			);
 		}
-
+		
 		// Suppression du coffre lorsque le joueur passe dessus et informations sur le nombre de coffres restants
 		if (
 			chests.find(
@@ -261,6 +257,13 @@ class Maze {
 		) {
 			var indexChest = chests.indexOf(this.cells[player.col][player.row]);
 			chests.splice(indexChest, 1);
+			// On actualise le nombre de coffres trouvés en rajoutant + 1 à la variable globale "chestsFound" et on modifie le suivi (pour indiquer l'avancée de l'utilisateur)
+            let totalChests = document.getElementById("totalChests");
+            totalChests.innerHTML = totalChests.innerHTML.replace(
+                chestsFound,
+                chestsFound + 1
+            );
+            chestsFound = chestsFound + 1;
 			// S'il reste encore des coffres, on affiche combien il en reste
 			if (chests.length > 0) {
 				alert(
@@ -298,47 +301,25 @@ class Maze {
 			);
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
-				alert("Bravo ! Vous avez terminé la partie ! ヾ(≧▽≦*)o");
-				alert('Vous allez passé au niveau suivant,,');
-				if(maze.cols == 4){
-					document.getElementById('menuIntermediaire').checked=true;
-				    maze.cols = 8;
-				    maze.rows = 8;
-				    maze.chests = 5;
-				}
-				else if (maze.cols == 8){
-					document.getElementById('menuDifficile').checked=true;
-					maze.cols = 11;
-				    maze.rows = 11;
-				    maze.chests = 7;
-				}
-				/*
-				maze.cols = document.getElementById("cols").value;
-				maze.rows = document.getElementById("rows").value;
-				maze.chests = document.getElementById("chests").value;
-				*/
-				maze.generate();
+				alert("Bravo ! Vous avez terminé : "+document.getElementById('timer').innerHTML);
 			}
 		}
 	}
 }
 
-// Fonction pour générer un labyrinthe en entrant des valeurs spécifiques directement depuis la page web
+// Fonction pour générer un labyrinthe en fonction du niveau choisi : 
 function onClick(event) {
 	player.reset();
 	if(document.getElementById('menuFacile').checked ==true){
-	    alert('Facile');
 	    maze.cols = 4;
 	    maze.rows = 4;
 	    maze.chests = 3;
 	}
 	else if (document.getElementById('menuIntermediaire').checked ==true){
-		alert("Préparez-vous pour le niveau Intermediaire, puis clicker sur OK");
 		maze.cols = 8;
 	    maze.rows = 8;
 	    maze.chests = 5;
 	}else if (document.getElementById('menuDifficile').checked ==true){
-		alert('Êtes-vous prêt pour le niveau difficile ?');
 		maze.cols = 11;
 	    maze.rows = 11;
 	    maze.chests = 7;
@@ -346,11 +327,6 @@ function onClick(event) {
 		alert('veuillez choisir le niveau de jeu');
 		return 0;
 	}
-	/*
-	maze.cols = document.getElementById("cols").value;
-	maze.rows = document.getElementById("rows").value;
-	maze.chests = document.getElementById("chests").value;
-	*/
 
 	if (maze.chests > maze.cols * maze.rows - 2) {
 		alert(
@@ -358,6 +334,8 @@ function onClick(event) {
 		);
 	} else {
 		maze.generate();
+		document.getElementById('timer').innerHTML = 005 + ':' + 01;
+		startTimer();
 	}
 }
 
@@ -422,10 +400,31 @@ function onKeyDown(event) {
 	}
 	maze.redraw();
 }
+
+//La partie qui va chronometrée le jeu (TIMER) : 
+function startTimer() {
+	var presentTime = document.getElementById('timer').innerHTML;
+	var timeArray = presentTime.split(/[:]+/);
+	var m = timeArray[0];
+	var s = checkSecond((timeArray[1] - 1));
+	if(s==59){
+		m=m-1;
+	}
+	
+	document.getElementById('timer').innerHTML = m + ":" + s;
+	console.log(m);
+	setTimeout(startTimer, 1000);
+}
+
+function checkSecond(sec) {
+	if (sec < 10 && sec >= 0) {sec = "0" + sec}; 
+	if (sec < 0) {sec = "59"};
+	return sec;
+}
+
 function onLoad() {
 	canvas = document.getElementById("mainForm");
 	ctx = canvas.getContext("2d");
-
 	player = new Player();
 	var col = 4;
 	var row = 4;
@@ -438,31 +437,12 @@ function onLoad() {
 		);
 	} else {
 		maze = new Maze(col, row, size, chest);
+	}	
+	document.getElementById("quitterPartie").onclick = function(){
+		alert('YES quitter');	
 	}
-
-	//La partie qui va chronometrée le jeu (TIMER) : 
-	
-	document.getElementById('timer').innerHTML = 005 + ":" + 01;
-	alert('GO !');
-	startTimer();
-	function startTimer() {
-		var presentTime = document.getElementById('timer').innerHTML;
-		var timeArray = presentTime.split(/[:]+/);
-		var m = timeArray[0];
-		var s = checkSecond((timeArray[1] - 1));
-		if(s==59){m=m-1}
-		
-		document.getElementById('timer').innerHTML =
-			m + ":" + s;
-		console.log(m)
-		setTimeout(startTimer, 1000);
-	}
-
-	function checkSecond(sec) {
-		if (sec < 10 && sec >= 0) {sec = "0" + sec}; 
-		if (sec < 0) {sec = "59"};
-		return sec;
-	}
+	// document.getElementById('timer').innerHTML = 005 + ':' + 01;
+	// startTimer();
 	// Les evenements :
 	document.addEventListener("keydown", onKeyDown);
 	document.getElementById("generate").addEventListener("click", onClick);
@@ -470,4 +450,5 @@ function onLoad() {
 	document.getElementById("right").addEventListener("click", onControlClick);
 	document.getElementById("down").addEventListener("click", onControlClick);
 	document.getElementById("left").addEventListener("click", onControlClick);
+	
 }

@@ -8,18 +8,21 @@
 		<title>htmlMaze</title>
 	</head>
 	<body onload="onLoad();" >
-		<header style="text-align: center;margin-left: 17em;">Racing Maze</header>
+		<header>
+            Racing Maze
+            <div style="font-size: 0.5em; margin-top: 4%" id="totalChests"></div>
+        </header>
 		<canvas id="mainForm"
 			>Votre navigateur ne supporte pas l'application...</canvas
 		>
 
 		<div class="container">
-			<div id="typePartie">
+			<!-- <div id="typePartie">
 				<input id="typePublique" type="radio" name="rtoggle" value="Publique" />
 				<label for="menuFacile">Publique</label>
 				<input id="typePrivee" type="radio" name="rtoggle" value="Privee" />
 				<label for="menuFacile">Privée</label>
-			</div>
+			</div> -->
 			<div id="niveauJeu">
 				<input id="menuFacile" type="radio" name="rtoggle" value="Facile" />
 				<label for="menuFacile">Facile</label>
@@ -28,10 +31,12 @@
 				<input id="menuDifficile" type="radio" name="rtoggle" value="Difficile" />
 				<label for="menuDifficile">Difficile</label>
 			</div>
-			<div>Time left = <span id="timer"></span>
-			<div class="settings">
-				
-				<input id="generate" type="button" value="Generate" />
+			<div id="divTimer">Time left = <span id="timer"></span></div>
+			<div class="settings">	
+				<input id="generate" type="button" value="Play" />
+			</div>
+			<div>
+				<input id="quitterPartie" type="button" value="Quitter"/>
 			</div>
 		</div>
 		<div class="controls">
