@@ -9,9 +9,9 @@ let chests = [];
 // Variable pour stocker le nombre de coffres récupérés par l'utilisateur (de base aucun coffre récupéré donc 0)
 let chestsFound = 0;
 // Variables pour gérer le countdown
-let monTimer=0;
-//variable pour gérer le nombre de minutes en fonction du niveau de jeu : 
-let nbrMinutes=0;
+let monTimer;
+//variable pour gérer le nombre de minutes en fonction du niveau de jeu :
+let minutesNumber;
 
 class Player {
 	constructor() {
@@ -41,7 +41,7 @@ class MazeCell {
 }
 
 class Maze {
-	constructor(cols, rows, cellSize, chests, monTimer) {
+	constructor(cols, rows, cellSize, chests, minutesNumber) {
 		this.backgroundColor = "#ffffff";
 		this.cols = cols;
 		this.endColor = "#88FF88";
@@ -54,18 +54,21 @@ class Maze {
 
 		this.chestColor = "#000088";
 
+		this.minutesNumber = minutesNumber;
+
 		this.cells = [];
 
-		this.monTimer = monTimer;
 		this.generate();
 	}
-	
+
 	generate() {
-		
 		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe
 		chests = [];
 		chestsFound = 0;
-		
+
+		// On vide le timer pour ne pas accumuler les minuteurs
+		clearTimeout(monTimer);
+
 		mazeHeight = this.rows * this.cellSize;
 		mazeWidth = this.cols * this.cellSize;
 
@@ -155,6 +158,36 @@ class Maze {
 			}
 		}
 
+		startTimer(this.minutesNumber);
+
+		// Fonction pour chronométrer le temps de la partie (minuteur) :
+		function startTimer(nbrMinute) {
+			var seconds = 60;
+			var mins = nbrMinute;
+
+			function tick() {
+				var counter = document.getElementById("counter");
+				var current_minutes = mins - 1;
+				seconds--;
+				counter.innerHTML =
+					current_minutes.toString() +
+					":" +
+					(seconds < 10 ? "0" : "") +
+					String(seconds);
+				if (seconds > 0) {
+					console.log(monTimer);
+					monTimer = setTimeout(tick, 1000);
+				} else if (seconds === 0) {
+					alert("Votre temps est écoulé !");
+				} else {
+					if (mins > 1) {
+						startTimer(mins - 1);
+					}
+				}
+			}
+			tick();
+		}
+
 		// Fonction pour générer autant de coffres que demandé et chacun à une position aléatoire que l'on stocke dans le tableau "chests"
 		for (let chest = 0; chest < this.chests; chest++) {
 			// Génération d'une colonne et ligne aléatoire
@@ -175,9 +208,9 @@ class Maze {
 			chests.push(this.cells[randomCol][randomRow]);
 		}
 		// On affiche le nombre total de coffres à l'écran (pour indiquer l'avancée de l'utilisateur)
-        document.getElementById("totalChests").innerHTML =
-            chestsFound + " / " + chests.length + " coffres trouvés";
-		this.redraw();		
+		document.getElementById("totalChests").innerHTML =
+			chestsFound + " / " + chests.length + " coffres trouvés";
+		this.redraw();
 	}
 
 	hasUnvisited() {
@@ -252,7 +285,7 @@ class Maze {
 				this.cellSize - 4
 			);
 		}
-		
+
 		// Suppression du coffre lorsque le joueur passe dessus et informations sur le nombre de coffres restants
 		if (
 			chests.find(
@@ -262,12 +295,12 @@ class Maze {
 			var indexChest = chests.indexOf(this.cells[player.col][player.row]);
 			chests.splice(indexChest, 1);
 			// On actualise le nombre de coffres trouvés en rajoutant + 1 à la variable globale "chestsFound" et on modifie le suivi (pour indiquer l'avancée de l'utilisateur)
-            let totalChests = document.getElementById("totalChests");
-            totalChests.innerHTML = totalChests.innerHTML.replace(
-                chestsFound,
-                chestsFound + 1
-            );
-            chestsFound = chestsFound + 1;
+			let totalChests = document.getElementById("totalChests");
+			totalChests.innerHTML = totalChests.innerHTML.replace(
+				chestsFound,
+				chestsFound + 1
+			);
+			chestsFound = chestsFound + 1;
 			// S'il reste encore des coffres, on affiche combien il en reste
 			if (chests.length > 0) {
 				alert(
@@ -303,36 +336,63 @@ class Maze {
 				this.cellSize,
 				this.cellSize
 			);
+
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
-				alert("Bravo ! Vous avez terminé : "+document.getElementById('timer').innerHTML);
+				alert(
+					"Bravo ! Vous êtes sortis du labyrinthe ! Voici le temps que vous avez mis : " +
+						secondsToMinutesAndSeconds(monTimer)
+				);
+				clearTimeout(monTimer);
 			}
 		}
 	}
 }
 
-// Fonction pour générer un labyrinthe en fonction du niveau choisi : 
+// Conversion format secondes en format minutes-secondes
+function secondsToMinutesAndSeconds(time) {
+	// Minutes and seconds
+	var mins = Math.floor((time % 3600) / 60);
+	var secs = Math.floor(time % 60);
+
+	// Result
+	var ret = "";
+
+	if (mins <= 0) {
+		ret += "" + secs + " secondes";
+	} else if (mins === 1) {
+		ret += "" + mins + " minute " + (secs < 10 ? "0" : "");
+		ret += "" + secs;
+	} else {
+		ret += "" + mins + " minutes " + (secs < 10 ? "0" : "");
+		ret += "" + secs;
+	}
+
+	return ret;
+}
+
+// Fonction pour générer un labyrinthe en fonction du niveau choisi :
 function onClick(event) {
 	player.reset();
-	document.getElementById("counter").innerHTML="";
-	if(document.getElementById('menuFacile').checked ==true){
-	    maze.cols = 4;
-	    maze.rows = 4;
+	document.getElementById("counter").innerHTML = "";
+
+	if (document.getElementById("menuFacile").checked == true) {
+		maze.cols = 4;
+		maze.rows = 4;
 		maze.chests = 3;
-		maze.nbrMinutes = 2;
-	}
-	else if (document.getElementById('menuIntermediaire').checked ==true){
+		maze.minutesNumber = 2;
+	} else if (document.getElementById("menuIntermediaire").checked == true) {
 		maze.cols = 8;
-	    maze.rows = 8;
+		maze.rows = 8;
 		maze.chests = 5;
-		maze.nbrMinutes= 3;
-	}else if (document.getElementById('menuDifficile').checked ==true){
+		maze.minutesNumber = 3;
+	} else if (document.getElementById("menuDifficile").checked == true) {
 		maze.cols = 11;
-	    maze.rows = 11;
+		maze.rows = 11;
 		maze.chests = 7;
-		maze.nbrMinutes=4;
-	}else{
-		alert('veuillez choisir le niveau de jeu');
+		maze.minutesNumber = 4;
+	} else {
+		alert("veuillez choisir le niveau de jeu");
 		return 0;
 	}
 
@@ -342,10 +402,6 @@ function onClick(event) {
 		);
 	} else {
 		maze.generate();
-		// on vite le timer pour ne pas accumuler les minuteurs  
-		clearTimeout(monTimer);
-		// appel de la fonction avec le parametres nbrMinutes récuperer dans les tests en dessus en fonction de la difficulté
-		startTimer(maze.nbrMinutes);
 	}
 }
 
@@ -411,27 +467,6 @@ function onKeyDown(event) {
 	maze.redraw();
 }
 
-//La partie qui va chronometrée le jeu (TIMER) : 
-function startTimer(nbrMinute) {
-	var seconds = 60;
-    var mins = nbrMinute;
-    function tick() {
-
-        var counter = document.getElementById("counter");
-        var current_minutes = mins-1;
-        seconds--;
-        counter.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
-        if( seconds > 0 ) {
-			monTimer = setTimeout(tick, 1000);			
-        } else {
-            if(mins > 1){				
-                startTimer(mins-1);           
-            }
-        }
-    }
-    tick();
-}
-
 function onLoad() {
 	canvas = document.getElementById("mainForm");
 	ctx = canvas.getContext("2d");
@@ -440,20 +475,19 @@ function onLoad() {
 	var row = 4;
 	var size = 50;
 	var chest = 3;
-	var testTimer = null;
+	var minutesNumber = 1;
 
-	document.getElementById('menuFacile').checked=true;
+	document.getElementById("menuFacile").checked = true;
 	if (chest > col * row - 2) {
 		alert(
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
 		);
 	} else {
-		maze = new Maze(col, row, size, chest, testTimer);
-	}	
-	document.getElementById("quitterPartie").onclick = function(){
-		alert('YES quitter');
-			
+		maze = new Maze(col, row, size, chest, minutesNumber);
 	}
+	document.getElementById("quitterPartie").onclick = function () {
+		alert("YES quitter");
+	};
 
 	// Les evenements :
 	document.addEventListener("keydown", onKeyDown);
@@ -462,5 +496,4 @@ function onLoad() {
 	document.getElementById("right").addEventListener("click", onControlClick);
 	document.getElementById("down").addEventListener("click", onControlClick);
 	document.getElementById("left").addEventListener("click", onControlClick);
-	
 }
