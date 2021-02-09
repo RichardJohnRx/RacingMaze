@@ -8,8 +8,10 @@ let player;
 let chests = [];
 // Variable pour stocker le nombre de coffres récupérés par l'utilisateur (de base aucun coffre récupéré donc 0)
 let chestsFound = 0;
-
+// Variables pour gérer le countdown
 let monTimer=0;
+//variable pour gérer le nombre de minutes en fonction du niveau de jeu : 
+let nbrMinutes=0;
 
 class Player {
 	constructor() {
@@ -39,7 +41,7 @@ class MazeCell {
 }
 
 class Maze {
-	constructor(cols, rows, cellSize, chests) {
+	constructor(cols, rows, cellSize, chests, monTimer) {
 		this.backgroundColor = "#ffffff";
 		this.cols = cols;
 		this.endColor = "#88FF88";
@@ -54,12 +56,12 @@ class Maze {
 
 		this.cells = [];
 
+		this.monTimer = monTimer;
 		this.generate();
 	}
 	
 	generate() {
 		
-		// console.log(testings++);
 		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe
 		chests = [];
 		chestsFound = 0;
@@ -316,16 +318,19 @@ function onClick(event) {
 	if(document.getElementById('menuFacile').checked ==true){
 	    maze.cols = 4;
 	    maze.rows = 4;
-	    maze.chests = 3;
+		maze.chests = 3;
+		maze.nbrMinutes = 2;
 	}
 	else if (document.getElementById('menuIntermediaire').checked ==true){
 		maze.cols = 8;
 	    maze.rows = 8;
-	    maze.chests = 5;
+		maze.chests = 5;
+		maze.nbrMinutes= 3;
 	}else if (document.getElementById('menuDifficile').checked ==true){
 		maze.cols = 11;
 	    maze.rows = 11;
-	    maze.chests = 7;
+		maze.chests = 7;
+		maze.nbrMinutes=4;
 	}else{
 		alert('veuillez choisir le niveau de jeu');
 		return 0;
@@ -337,8 +342,10 @@ function onClick(event) {
 		);
 	} else {
 		maze.generate();
+		// on vite le timer pour ne pas accumuler les minuteurs  
 		clearTimeout(monTimer);
-		startTimer(1);
+		// appel de la fonction avec le parametres nbrMinutes récuperer dans les tests en dessus en fonction de la difficulté
+		startTimer(maze.nbrMinutes);
 	}
 }
 
@@ -405,12 +412,11 @@ function onKeyDown(event) {
 }
 
 //La partie qui va chronometrée le jeu (TIMER) : 
-function startTimer(n) {
-	
+function startTimer(nbrMinute) {
 	var seconds = 60;
-    var mins = n;
+    var mins = nbrMinute;
     function tick() {
-        //This script expects an element with an ID = "counter". You can change that to what ever you want. 
+
         var counter = document.getElementById("counter");
         var current_minutes = mins-1;
         seconds--;
@@ -434,20 +440,21 @@ function onLoad() {
 	var row = 4;
 	var size = 50;
 	var chest = 3;
+	var testTimer = null;
+
 	document.getElementById('menuFacile').checked=true;
 	if (chest > col * row - 2) {
 		alert(
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
 		);
 	} else {
-		maze = new Maze(col, row, size, chest);
+		maze = new Maze(col, row, size, chest, testTimer);
 	}	
 	document.getElementById("quitterPartie").onclick = function(){
 		alert('YES quitter');
 			
 	}
-	// document.getElementById('timer').innerHTML = 005 + ':' + 01;
-	//  startTimer(4);
+
 	// Les evenements :
 	document.addEventListener("keydown", onKeyDown);
 	document.getElementById("generate").addEventListener("click", onClick);
