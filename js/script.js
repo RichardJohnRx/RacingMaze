@@ -305,7 +305,10 @@ class Maze {
 			);
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
-				alert("Bravo ! Vous avez terminé : "+document.getElementById('timer').innerHTML);
+				console.log(maze.monTimer);
+				alert("Bravo ! Vous êtes sortis du labyrinthe ! Voici le temps que vous avez mis : "+secondsToMinutesAndSeconds(maze.monTimer));
+				clearTimeout(maze.monTimer);
+				
 			}
 		}
 	}
@@ -314,8 +317,8 @@ class Maze {
 // Fonction pour générer un labyrinthe en fonction du niveau choisi : 
 function onClick(event) {
 	player.reset();
-	document.getElementById("counter").innerHTML="";
-	if(document.getElementById('menuFacile').checked ==true){
+	maze.monTimer=0;
+ 	if(document.getElementById('menuFacile').checked ==true){
 	    maze.cols = 4;
 	    maze.rows = 4;
 		maze.chests = 3;
@@ -342,10 +345,11 @@ function onClick(event) {
 		);
 	} else {
 		maze.generate();
-		// on vite le timer pour ne pas accumuler les minuteurs  
-		clearTimeout(monTimer);
+		// on vide le timer pour ne pas accumuler les minuteurs  
+		clearTimeout(maze.monTimer);
 		// appel de la fonction avec le parametres nbrMinutes récuperer dans les tests en dessus en fonction de la difficulté
 		startTimer(maze.nbrMinutes);
+		
 	}
 }
 
@@ -413,16 +417,16 @@ function onKeyDown(event) {
 
 //La partie qui va chronometrée le jeu (TIMER) : 
 function startTimer(nbrMinute) {
+	
 	var seconds = 60;
     var mins = nbrMinute;
     function tick() {
-
         var counter = document.getElementById("counter");
         var current_minutes = mins-1;
         seconds--;
         counter.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
         if( seconds > 0 ) {
-			monTimer = setTimeout(tick, 1000);			
+			maze.monTimer = setTimeout(tick, 1000);			
         } else {
             if(mins > 1){				
                 startTimer(mins-1);           
@@ -430,6 +434,23 @@ function startTimer(nbrMinute) {
         }
     }
     tick();
+}
+// Conversion format secondes en format heure-minutes-secondes
+function secondsToMinutesAndSeconds(time) {
+    // Hours, minutes and seconds
+    var hrs = Math.floor(time / 3600);
+    var mins = Math.floor((time % 3600) / 60);
+    var secs = Math.floor(time % 60);
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    var ret = "";
+    if (hrs > 0) {
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+	ret += "" + secs;
+	
+    return ret;
 }
 
 function onLoad() {
@@ -440,15 +461,15 @@ function onLoad() {
 	var row = 4;
 	var size = 50;
 	var chest = 3;
-	var testTimer = null;
 
+	
 	document.getElementById('menuFacile').checked=true;
 	if (chest > col * row - 2) {
 		alert(
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
 		);
 	} else {
-		maze = new Maze(col, row, size, chest, testTimer);
+		maze = new Maze(col, row, size, chest, monTimer);
 	}	
 	document.getElementById("quitterPartie").onclick = function(){
 		alert('YES quitter');
