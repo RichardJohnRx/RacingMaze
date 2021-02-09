@@ -9,6 +9,7 @@ let chests = [];
 // Variable pour stocker le nombre de coffres récupérés par l'utilisateur (de base aucun coffre récupéré donc 0)
 let chestsFound = 0;
 
+let monTimer=0;
 
 class Player {
 	constructor() {
@@ -55,9 +56,10 @@ class Maze {
 
 		this.generate();
 	}
-
+	
 	generate() {
-		alert('appel de generate ?');
+		
+		// console.log(testings++);
 		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe
 		chests = [];
 		chestsFound = 0;
@@ -310,6 +312,7 @@ class Maze {
 // Fonction pour générer un labyrinthe en fonction du niveau choisi : 
 function onClick(event) {
 	player.reset();
+	document.getElementById("counter").innerHTML="";
 	if(document.getElementById('menuFacile').checked ==true){
 	    maze.cols = 4;
 	    maze.rows = 4;
@@ -334,8 +337,8 @@ function onClick(event) {
 		);
 	} else {
 		maze.generate();
-		document.getElementById('timer').innerHTML = 005 + ':' + 01;
-		startTimer();
+		clearTimeout(monTimer);
+		startTimer(1);
 	}
 }
 
@@ -402,24 +405,25 @@ function onKeyDown(event) {
 }
 
 //La partie qui va chronometrée le jeu (TIMER) : 
-function startTimer() {
-	var presentTime = document.getElementById('timer').innerHTML;
-	var timeArray = presentTime.split(/[:]+/);
-	var m = timeArray[0];
-	var s = checkSecond((timeArray[1] - 1));
-	if(s==59){
-		m=m-1;
-	}
+function startTimer(n) {
 	
-	document.getElementById('timer').innerHTML = m + ":" + s;
-	console.log(m);
-	setTimeout(startTimer, 1000);
-}
-
-function checkSecond(sec) {
-	if (sec < 10 && sec >= 0) {sec = "0" + sec}; 
-	if (sec < 0) {sec = "59"};
-	return sec;
+	var seconds = 60;
+    var mins = n;
+    function tick() {
+        //This script expects an element with an ID = "counter". You can change that to what ever you want. 
+        var counter = document.getElementById("counter");
+        var current_minutes = mins-1;
+        seconds--;
+        counter.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+        if( seconds > 0 ) {
+			monTimer = setTimeout(tick, 1000);			
+        } else {
+            if(mins > 1){				
+                startTimer(mins-1);           
+            }
+        }
+    }
+    tick();
 }
 
 function onLoad() {
@@ -439,10 +443,11 @@ function onLoad() {
 		maze = new Maze(col, row, size, chest);
 	}	
 	document.getElementById("quitterPartie").onclick = function(){
-		alert('YES quitter');	
+		alert('YES quitter');
+			
 	}
 	// document.getElementById('timer').innerHTML = 005 + ':' + 01;
-	// startTimer();
+	//  startTimer(4);
 	// Les evenements :
 	document.addEventListener("keydown", onKeyDown);
 	document.getElementById("generate").addEventListener("click", onClick);
