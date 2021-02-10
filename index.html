@@ -5,14 +5,14 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<script src="js/script.js"></script>
-		
+
 		<title>htmlMaze</title>
 	</head>
-	<body onload="onLoad();" >
+	<body onload="onLoad();">
 		<header>
-            Racing Maze
-            <div style="font-size: 0.5em; margin-top: 4%" id="totalChests"></div>
-        </header>
+			Racing Maze
+			<div style="font-size: 0.5em; margin-top: 4%" id="totalChests"></div>
+		</header>
 		<canvas id="mainForm"
 			>Votre navigateur ne supporte pas l'application...</canvas
 		>
@@ -27,18 +27,28 @@
 			<div id="niveauJeu">
 				<input id="menuFacile" type="radio" name="rtoggle" value="Facile" />
 				<label for="menuFacile">Facile</label>
-				<input id="menuIntermediaire" type="radio" name="rtoggle" value="Intermediaire" />
+				<input
+					id="menuIntermediaire"
+					type="radio"
+					name="rtoggle"
+					value="Intermediaire"
+				/>
 				<label for="menuIntermediaire">Intermédiaire</label>
-				<input id="menuDifficile" type="radio" name="rtoggle" value="Difficile" />
+				<input
+					id="menuDifficile"
+					type="radio"
+					name="rtoggle"
+					value="Difficile"
+				/>
 				<label for="menuDifficile">Difficile</label>
 			</div>
 			<div id="counter"></div>
 			<!-- <div id="divTimer">Time left = <span id="timer"></span></div> -->
-			<div class="settings">	
+			<div class="settings">
 				<input id="generate" type="button" value="Play" />
 			</div>
 			<div>
-				<input id="quitterPartie" type="button" value="Quitter"/>
+				<input id="quitterPartie" type="button" value="Quitter" />
 			</div>
 		</div>
 		<div class="controls">
@@ -47,11 +57,9 @@
 			<div id="down" class="down">&#8681;</div>
 			<div id="left" class="left">&#8678;</div>
 		</div>
-		<footer >
+		<footer>
 			&copy; 2021
-			<a href="#"
-				>LP CIASIE</a
-			>
+			<a href="#">LP CIASIE</a>
 		</footer>
 	</body>
 </html>
