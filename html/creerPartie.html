@@ -1,44 +1,49 @@
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
+        <link rel="stylesheet" href="../css/stylesCreerPatie.css"/>
         <meta charset="UTF-8" />
         <script src="../js/scriptCreerPartie.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        
         <title>Creation d'une partie</title>
         <style>
-            /* div{
-                text-align: center;
-                margin-top:0.6em;
-                border: 1px solid black;
-            } */
+          
         </style>
 	</head>
 	<body>
         <h1>Créer Partie</h1>
-        <label for="nomPartie">Nom : </label><input id="nomPartie" type="text"><br>
-        <label for="nomPartie">Avatar : </label> 
+        <label for="nomPartie">Nom </label><input id="nomPartie" type="text"><br>
+        <label for="nomPartie">Avatar  </label>
+        <div class="avatar">
+            <div id="avatargreen" class="avatars" onclick="choixAvatar('avatargreen')">G</div>
+            <div id="avatarred" class="avatars" onclick="choixAvatar('avatarred')">R</div>
+            <div id="avataryellow" class="avatars" onclick="choixAvatar('avataryellow')">Y</div>
+            <div id="avataraqua" class="avatars" onclick="choixAvatar('avataraqua')">A</div>
+        </div>
+            <!-- <div id="avatar1" class="avatar">1</div>
+            <div id="avatar2" class="avatar">2</div>
+            <div id="avatar3" class="avatar">3</div>
+            <div id ="avatar4" class="avatar">4</div> -->
         <div id="typePartie">
-            <input id="partiePublique" type="radio" name="rtoggle" value="partiePublique" />
+            <input id="partiePublique" type="radio" name="partietoggle" value="partiePublique" onclick="radioCheck()"/>
             <label for="partiePublique">Publique</label>
-            <input id="partiePrivee" type="radio" name="rtoggle" value="partiePrivee" />
+            <input id="partiePrivee" type="radio" name="partietoggle" value="partiePrivee" onclick="radioCheck()" />
             <label for="partiePrivee">Privée</label>
         </div>
         <div id="niveauJeu" style="display: none;">
-            <input id="menuFacile" type="radio" name="rtoggle" value="Facile" />
+            <input id="menuFacile" type="radio" name="niveautoggle" value="Facile" />
             <label for="menuFacile">Facile</label>
-            <input id="menuIntermediaire" type="radio" name="rtoggle" value="Intermediaire" />
+            <input id="menuIntermediaire" type="radio" name="niveautoggle" value="Intermediaire" />
             <label for="menuIntermediaire">Intermédiaire</label>
-            <input id="menuDifficile" type="radio" name="rtoggle" value="Difficile" />
+            <input id="menuDifficile" type="radio" name="niveautoggle" value="Difficile" />
             <label for="menuDifficile">Difficile</label>
-        </div>
-        <div id="infoPartiePub" style="display: none;">
-            juste pour le test (publique)
         </div>
         <div id="infoPartiePriv" style="display: none;">
             <label for="codeAcces">Code d'acces : </label><input id="codeAcces" type="text">
         </div>
 
-        <input style="display: none;" id="creerPartie" type="submit" value="Creer"/>
+        <input id="creer" type="submit" value="Creer" onclick="creer();"/>
 	</body>
 </html>
 

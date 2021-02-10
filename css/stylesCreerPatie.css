@@ -1,0 +1,31 @@
+.avatar{
+    margin-left: 0.5em;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+#avatargreen {
+    margin-left: 0.5;
+    background-color: green;
+    width: 30px;
+    text-align: center;
+}
+#avatarred {
+    margin-left: 0.5;
+    background-color: red;
+    width: 30px;
+    text-align: center;
+}
+#avataryellow {
+    margin-left: 0.5;
+    background-color:yellow;
+    width: 30px;
+    text-align: center;
+}
+#avataraqua {
+    margin-left: 0.5;
+    background-color:aqua;
+    width: 30px;
+    text-align: center;
+}
