@@ -162,7 +162,7 @@ class Maze {
 
 		// Partie du minuteur
 		// On stocke dans la variable globale le nombre de secondes qui on été passé en paramètre (en fonction de la difficulté)
-		minutesNumber = this.minutesNumber * 60;
+		minutesNumber = this.minutesNumber * 60 - 1;
 
 		var display = document.getElementById("counter");
 		startTimer(minutesNumber, display);
