@@ -40,44 +40,79 @@ function choixAvatar(id){
         return document.getElementById('avataraqua');
     }
 }
+// pour récuperer l'avatar choisis
+function avatarColor(){
+    if(document.getElementById('avatargreen').style.border == '1px solid black'){
+        return "green";
+    }else if(document.getElementById('avatarred').style.border == '1px solid black'){
+        return "red";
+    }else if(document.getElementById('avataryellow').style.border == '1px solid black'){
+        return "yellow";
+    }else if(document.getElementById('avataraqua').style.border == '1px solid black'){
+        return "aqua";
+    }else return "";
+}
+//Pour récuperer le type de la partie
+function typeChoisis(){
+    if(document.getElementById('partiePublique').checked == true)
+        return document.getElementById('partiePublique');
+    else if(document.getElementById('partiePrivee').checked == true)
+        return document.getElementById('partiePrivee');
+    else return "";
+}
 
+// Pour récuperer le niveau choisis
+function niveauChoisis(){
+    if(document.getElementById('menuFacile').checked == true){
+        return "Facile";
+    }else if(document.getElementById('menuIntermediaire').checked == true){
+        return "Intermediaire";
+    }else if(document.getElementById('menuDifficile').checked == true){
+        return "Difficile";
+    }
+    return "";
+}
 //Boutton pour creer une partie 
 function creer(){
+    var nom = "";
+    var avatar = "";
+    var type = "";
+    var niveau = "";
     if(document.getElementById('nomPartie').value == ""){
         alert('saisir le nom svp');
     }else{
-        if(document.getElementById('avatargreen').style.border != '1px solid black' 
-            && document.getElementById('avatarred').style.border != '1px solid black'
-            && document.getElementById('avataryellow').style.border != '1px solid black'
-            && document.getElementById('avataraqua').style.border != '1px solid black'){
+        avatar = avatarColor();
+        if(avatar == ""){
                 alert('choisissez un avatar svp');
-        }else{
-            if(document.getElementById('partiePublique').checked == true){
-                console.log('publique');
-                document.getElementById('niveauJeu').style.display='block';
-                if(document.getElementById('menuFacile').checked == false && document.getElementById('menuIntermediaire').checked == false && document.getElementById('menuDifficile').checked == false){
-                    alert('veuillez choisir le niveau svp');
-                }else{
-                    // CODE DE LA FONCTION CREER PARTIE PUBLIQUE pour envoyé les données au lobby
-                }
-            }
-            else if(document.getElementById('partiePrivee').checked == true){
-                console.log('privée');
-                document.getElementById('niveauJeu').style.display='block';
-                if(document.getElementById('menuFacile').checked == false && document.getElementById('menuIntermediaire').checked == false && document.getElementById('menuDifficile').checked == false){
-                    alert('veuillez choisir le niveau svp');
-                }else{
-                    if(document.getElementById('codeAcces').value == ""){
-                        alert("veuillez saisir le code d'acces");
-                    }else{
-                        // CODE DE LA FONCTION CREER PARTIE PRIVEE pour envoyé les données au lobby
-                    }
-                }
+        }else if(document.getElementById('partiePublique').checked == true){
+            document.getElementById('niveauJeu').style.display='block';
+            niveau = niveauChoisis();
+            if(niveau == ""){
+                alert('veuillez choisir le niveau svp');
             }else{
-                alert('veuillez choisir le type de la partie (Publique/privée)');               
+                nom = document.getElementById('nomPartie').value;//avatar
+                type = "Publique";//niveau
+                
+                alert('creation de la partie... nom :' + nom + ', avatar : '+ avatar +' type :' + type + ', niveau : ' + niveau);
+                // CODE DE LA FONCTION CREER PARTIE PUBLIQUE pour envoyé les données au lobby
+                return document.getElementById('nomPartie').value,avatar,type,niveau;
             }
-            
-        }          
-    }
-    
+        }else if(document.getElementById('partiePrivee').checked == true){
+            console.log('privee');
+            document.getElementById('niveauJeu').style.display='block';
+            niveau = niveauChoisis();
+            if(niveau == ""){
+                 alert('veuillez choisir le niveau svp');
+            }else{
+                nom = document.getElementById('nomPartie').value;//avatar
+                type = "Publique";//niveau
+
+                alert('creation de la partie... nom :' + nom + ', avatar : '+ avatar +' type :' + type + ', niveau : ' + niveau);
+                // CODE DE LA FONCTION CREER PARTIE PRIVEE pour envoyé les données au lobby
+                return document.getElementById('nomPartie').value,avatar,type,niveau;
+            }                        
+        }else{
+                alert('veuillez choisir le type de la partie Public/privée');
+        }             
+    }   
 }
