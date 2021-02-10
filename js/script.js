@@ -15,6 +15,7 @@ let monTimer;
 // Variable pour gérer le nombre de minutes en fonction du niveau de jeu :
 let minutesNumber;
 
+// Le joueur
 class Player {
 	constructor() {
 		this.reset();
@@ -26,6 +27,7 @@ class Player {
 	}
 }
 
+// Les cellules du labyrinthe
 class MazeCell {
 	constructor(col, row) {
 		this.col = col;
@@ -164,10 +166,11 @@ class Maze {
 		// On stocke dans la variable globale le nombre de secondes qui on été passé en paramètre (en fonction de la difficulté)
 		minutesNumber = this.minutesNumber * 60 - 1;
 
+		// Appel de la fonction qui démarre le minuteur
 		var display = document.getElementById("counter");
 		startTimer(minutesNumber, display);
 
-		// Fonction pour chronométrer le temps de la partie (minuteur) :
+		// Fonction pour chronométrer le temps de la partie (minuteur)
 		function startTimer(duration, display) {
 			var timer = duration,
 				minutes,
@@ -185,6 +188,7 @@ class Maze {
 				if (--timer < 0) {
 					timer = duration;
 
+					// Si le minuteur arrive à 0 seconde, la partie se termine et le minuteur s'arrête
 					if (seconds == 0) {
 						alert("Votre temps est écoulé ! La partie est terminée.");
 						clearInterval(monTimer);
@@ -306,7 +310,7 @@ class Maze {
 				chestsFound + 1
 			);
 			chestsFound = chestsFound + 1;
-			// S'il reste encore des coffres, on affiche combien il en reste
+			// S'il reste encore des coffres dans le labyrinthe, on affiche combien il en reste dans une alerte pour lui indiquer son avancée
 			if (chests.length > 0) {
 				alert(
 					"Il vous manque " +
@@ -314,7 +318,7 @@ class Maze {
 						" coffres pour pouvoir sortir du labyrinthe."
 				);
 			}
-			// S'il n'y a plus de coffres il faut vite se diriger vers la sortie !
+			// S'il n'y a plus de coffres à récupérer, il faut vite se diriger vers la sortie !
 			else {
 				alert(
 					"Bravo vous avez récupéré tous les coffres, dirigez-vous vite vers la sortie qui vient de s'ouvrir pour terminer la partie !"
@@ -342,7 +346,7 @@ class Maze {
 				this.cellSize
 			);
 
-			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie
+			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie en affichant le temps qu'il a mis pour terminer
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
 				alert(
 					"Bravo ! Vous êtes sortis du labyrinthe ! Voici le temps que vous avez mis : " +
@@ -351,6 +355,7 @@ class Maze {
 						)
 				);
 				// clearTimeout(monTimer);
+				// Arrêt du minuteur lorsqu'on sort du labyrinthe
 				clearInterval(monTimer);
 			}
 		}
@@ -365,28 +370,28 @@ function convertMinutesSecondsToSeconds(time) {
 	// On convertit les minutes en secondes et on les additionne avec le reste des secondes
 	var seconds = +minutesSeconds[0] * 60 + +minutesSeconds[1];
 
-	// On soustrait le résultat avec le temps du minuteur
-	var result = minutesNumber - seconds;
-	var mins = Math.floor((result % 3600) / 60);
-	var secs = Math.floor(result % 60);
+	// On soustrait le résultat avec le temps du minuteur initial (exemple : 120 (2minutes) - 100 (1minute40))
+	var secondsResult = minutesNumber - seconds;
+	var mins = Math.floor((secondsResult % 3600) / 60);
+	var secs = Math.floor(secondsResult % 60);
 
-	// Result
-	var ret = "";
+	// Conversion des secondes en un format plus lisible pour l'utilisateur
+	var result = "";
 
 	if (mins <= 0) {
-		ret += "" + secs + " secondes";
+		result += "" + secs + " secondes";
 	} else if (mins === 1) {
-		ret += "" + mins + " minute " + (secs < 10 ? "0" : "");
-		ret += "" + secs;
+		result += "" + mins + " minute " + (secs < 10 ? "0" : "");
+		result += "" + secs;
 	} else {
-		ret += "" + mins + " minutes " + (secs < 10 ? "0" : "");
-		ret += "" + secs;
+		result += "" + mins + " minutes " + (secs < 10 ? "0" : "");
+		result += "" + secs;
 	}
 
-	return ret;
+	return result;
 }
 
-// Fonction pour générer un labyrinthe en fonction du niveau choisi :
+// Fonction pour générer un labyrinthe en fonction du niveau choisi, chaque niveau possède différents paramètres pour générer le labyrinthe (le nombre de colonnes, lignes, coffres, minutes du minuteur)
 function onClick(event) {
 	player.reset();
 	document.getElementById("counter").innerHTML = "";
@@ -411,6 +416,7 @@ function onClick(event) {
 		return 0;
 	}
 
+	// Condition pour vérifier que le nombre de coffres n'est pas trop élevé
 	if (maze.chests > maze.cols * maze.rows - 2) {
 		alert(
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
@@ -452,25 +458,25 @@ function onControlClick(event) {
 // Code pour permettre au joueur de se déplacer en utilisant ses flèches directionnelles ou ZQSD
 function onKeyDown(event) {
 	switch (event.keyCode) {
-		case 37: // Left
+		case 37: // Flèche directionnelle gauche
 		case 81: // Q
 			if (!maze.cells[player.col][player.row].westWall) {
 				player.col -= 1;
 			}
 			break;
-		case 39: // Right
+		case 39: // Flèche directionnelle droite
 		case 68: // D
 			if (!maze.cells[player.col][player.row].eastWall) {
 				player.col += 1;
 			}
 			break;
-		case 40: // Bottom
+		case 40: // Flèche directionnelle bas
 		case 83: // S
 			if (!maze.cells[player.col][player.row].southWall) {
 				player.row += 1;
 			}
 			break;
-		case 38: // Top
+		case 38: // Flèche directionnelle haut
 		case 90: // Z
 			if (!maze.cells[player.col][player.row].northWall) {
 				player.row -= 1;
@@ -483,16 +489,25 @@ function onKeyDown(event) {
 }
 
 function onLoad() {
+	// Création du canvas et du joueur
 	canvas = document.getElementById("mainForm");
 	ctx = canvas.getContext("2d");
 	player = new Player();
+
+	// Nombre de colonnes
 	var col = 4;
+	// Nombre de lignes
 	var row = 4;
+	// Taille des cellules
 	var size = 50;
+	// Nombre de coffres
 	var chest = 3;
+	// Durée en minutes du minuteur de la partie
 	var minutesNumber = 1;
 
 	document.getElementById("menuFacile").checked = true;
+
+	// Condition pour vérifier que le nombre de coffres n'est pas trop élevé
 	if (chest > col * row - 2) {
 		alert(
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
@@ -504,7 +519,7 @@ function onLoad() {
 		alert("YES quitter");
 	};
 
-	// Les evenements :
+	// Les événements
 	document.addEventListener("keydown", onKeyDown);
 	document.getElementById("generate").addEventListener("click", onClick);
 	document.getElementById("up").addEventListener("click", onControlClick);
