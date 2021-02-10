@@ -4,15 +4,16 @@ let maze;
 let mazeHeight;
 let mazeWidth;
 let player;
+
 // Variable pour stocker tous les coffres
 let chests = [];
 // Variable pour stocker le nombre de coffres récupérés par l'utilisateur (de base aucun coffre récupéré donc 0)
 let chestsFound = 0;
-// Variables pour gérer le countdown
-let monTimer;
-//variable pour gérer le nombre de minutes en fonction du niveau de jeu :
-let minutesCOUNTER=0;
 
+// Variable pour gérer le countdown
+let monTimer;
+// Variable pour gérer le nombre de minutes en fonction du niveau de jeu :
+let minutesNumber;
 
 class Player {
 	constructor() {
@@ -68,7 +69,7 @@ class Maze {
 		chestsFound = 0;
 
 		// On vide le timer pour ne pas accumuler les minuteurs
-		clearTimeout(monTimer);
+		clearInterval(monTimer);
 
 		mazeHeight = this.rows * this.cellSize;
 		mazeWidth = this.cols * this.cellSize;
@@ -158,63 +159,39 @@ class Maze {
 				currCell = stack.pop();
 			}
 		}
-		clearInterval(monTimer);
-		minutesCOUNTER = 2;
-		if(document.getElementById('menuFacile').checked == true){
-			minutesCOUNTER = 60*2;
-		}else if(document.getElementById('menuIntermediaire').checked == true){
-			minutesCOUNTER = 60*4;
-		}else if(document.getElementById('menuDifficile').checked == true){
-			minutesCOUNTER = 60*5;
-		}
-		var display = document.getElementById('counter');
-		startTimer(minutesCOUNTER, display);
+
+		// Partie du minuteur
+		// On stocke dans la variable globale le nombre de secondes qui on été passé en paramètre (en fonction de la difficulté)
+		minutesNumber = this.minutesNumber * 60;
+
+		var display = document.getElementById("counter");
+		startTimer(minutesNumber, display);
 
 		// Fonction pour chronométrer le temps de la partie (minuteur) :
-		function startTimer(duration, display){
-			
-				var timer = duration, minutes, seconds;
-				monTimer = setInterval(function () {
-					minutes = parseInt(timer / 60, 10);
-					seconds = parseInt(timer % 60, 10);
-			
-					minutes = minutes < 10 ? "0" + minutes : minutes;
-					seconds = seconds < 10 ? "0" + seconds : seconds;
-			
-					display.innerHTML = minutes + ":" + seconds;
-			
-					if (--timer < 0) {
-						timer = duration;
-					}
-				}, 1000);
-		}
-		// function startTimers(nbrMinute) {
-		// 	var seconds = 60;
-		// 	var mins = nbrMinute;
+		function startTimer(duration, display) {
+			var timer = duration,
+				minutes,
+				seconds;
 
-		// 	function tick() {
-		// 		var counter = document.getElementById("counter");
-		// 		var current_minutes = mins - 1;
-		// 		seconds--;
-		// 		counter.innerHTML =
-		// 			current_minutes.toString() +
-		// 			":" +
-		// 			(seconds < 10 ? "0" : "") +
-		// 			String(seconds);
-		// 		if (seconds > 0) {
-		// 			console.log(monTimer);
-		// 			monTimer = setTimeout(tick, 1000);
-		// 		} else if (seconds === 0) {
-		// 			alert("Votre temps est écoulé !");
-		// 			clearTimeout(monTimer);
-		// 		} else {
-		// 			if (mins > 1) {
-		// 				startTimer(mins - 1);
-		// 			}
-		// 		}
-		// 	}
-		// 	tick();
-		// }
+			monTimer = setInterval(function () {
+				minutes = parseInt(timer / 60, 10);
+				seconds = parseInt(timer % 60, 10);
+
+				minutes = minutes < 10 ? "0" + minutes : minutes;
+				seconds = seconds < 10 ? "0" + seconds : seconds;
+
+				display.innerHTML = minutes + ":" + seconds;
+
+				if (--timer < 0) {
+					timer = duration;
+
+					if (seconds == 0) {
+						alert("Votre temps est écoulé ! La partie est terminée.");
+						clearInterval(monTimer);
+					}
+				}
+			}, 1000);
+		}
 
 		// Fonction pour générer autant de coffres que demandé et chacun à une position aléatoire que l'on stocke dans le tableau "chests"
 		for (let chest = 0; chest < this.chests; chest++) {
@@ -368,43 +345,45 @@ class Maze {
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
 				alert(
-					//MODIFFFFFFF 
 					"Bravo ! Vous êtes sortis du labyrinthe ! Voici le temps que vous avez mis : " +
-					ResultatCOUNTER(document.getElementById('counter').innerHTML)
+						convertMinutesSecondsToSeconds(
+							document.getElementById("counter").innerHTML
+						)
 				);
-				clearTimeout(monTimer);
+				// clearTimeout(monTimer);
+				clearInterval(monTimer);
 			}
 		}
 	}
 }
-//MODIFFFFFFF 
-// Conversion format secondes en format minutes-secondes
-function ResultatCOUNTER(time) {
-	
-	console.log(time);
-	console.log(minutesCOUNTER/60);
-	console.log((minutesCOUNTER/60)-time);
-	
-	var a = time.split(':');
-	var seconds =(+a[0]) * 60 + (+a[1]);
-	console.log(seconds);
-	var mins = Math.floor((seconds % 3600) / 60);
-    var secs = Math.floor(seconds % 60);
 
-    // Result
-    var ret = "";
+// Conversion du format mm:ss en secondes
+function convertMinutesSecondsToSeconds(time) {
+	// On récupère les minutes + secondes
+	// On enlève les ":"
+	var minutesSeconds = time.split(":");
+	// On convertit les minutes en secondes et on les additionne avec le reste des secondes
+	var seconds = +minutesSeconds[0] * 60 + +minutesSeconds[1];
 
-    if (mins <= 0) {
-        ret += "" + secs + " secondes";
-    } else if (mins === 1) {
-        ret += "" + mins + " minute " + (secs < 10 ? "0" : "");
-        ret += "" + secs;
-    } else {
-        ret += "" + mins + " minutes " + (secs < 10 ? "0" : "");
-        ret += "" + secs;
-    }
+	// On soustrait le résultat avec le temps du minuteur
+	var result = minutesNumber - seconds;
+	var mins = Math.floor((result % 3600) / 60);
+	var secs = Math.floor(result % 60);
 
-    return ret;
+	// Result
+	var ret = "";
+
+	if (mins <= 0) {
+		ret += "" + secs + " secondes";
+	} else if (mins === 1) {
+		ret += "" + mins + " minute " + (secs < 10 ? "0" : "");
+		ret += "" + secs;
+	} else {
+		ret += "" + mins + " minutes " + (secs < 10 ? "0" : "");
+		ret += "" + secs;
+	}
+
+	return ret;
 }
 
 // Fonction pour générer un labyrinthe en fonction du niveau choisi :
