@@ -48,15 +48,24 @@ class Maze {
 	constructor(cols, rows, cellSize, chests, minutesNumber) {
 		this.backgroundColor = "#ffffff";
 		this.cols = cols;
-		this.endColor = "#88FF88";
+		// this.endColor = "#88FF88";
 		this.mazeColor = "#000000";
-		this.playerColor = "#880088";
+		// this.playerColor = "#880088";
 		this.rows = rows;
 		this.cellSize = cellSize;
 
 		this.chests = chests;
 
-		this.chestColor = "#000088";
+		// this.chestColor = "#000088";
+
+		this.playerImage = new Image();
+		this.playerImage.src = "images/player.png";
+
+		this.endImage = new Image();
+		this.endImage.src = "images/end.png";
+
+		this.chestImage = new Image();
+		this.chestImage.src = "images/chest.png";
 
 		this.minutesNumber = minutesNumber;
 
@@ -170,7 +179,7 @@ class Maze {
 		var display = document.getElementById("counter");
 		startTimer(minutesNumber, display);
 
-		// Fonction pour chronométrer le temps de la partie (minuteur)
+		// Fonction pour chronométrer le temps de la partie (minuteur) :
 		function startTimer(duration, display) {
 			var timer = duration,
 				minutes,
@@ -284,10 +293,33 @@ class Maze {
 			}
 		}
 
-		// Affichage des coffres à partir du tableau "chests"
+		// Affichage des coffres à partir du tableau "chests" (version avec la couleur)
+		// for (var chest in chests) {
+		// 	ctx.fillStyle = this.chestColor;
+		// 	ctx.fillRect(
+		// 		chests[chest].col * this.cellSize + 2,
+		// 		chests[chest].row * this.cellSize + 2,
+		// 		this.cellSize - 4,
+		// 		this.cellSize - 4
+		// 	);
+		// }
+
+		// Affichage des coffres à partir du tableau "chests" (version avec l'image)
+		this.chestImage.onload = () => {
+			for (var chest in chests) {
+				ctx.drawImage(
+					this.chestImage,
+					chests[chest].col * this.cellSize + 2,
+					chests[chest].row * this.cellSize + 2,
+					this.cellSize - 4,
+					this.cellSize - 4
+				);
+			}
+		};
+
 		for (var chest in chests) {
-			ctx.fillStyle = this.chestColor;
-			ctx.fillRect(
+			ctx.drawImage(
+				this.chestImage,
 				chests[chest].col * this.cellSize + 2,
 				chests[chest].row * this.cellSize + 2,
 				this.cellSize - 4,
@@ -326,9 +358,28 @@ class Maze {
 			}
 		}
 
-		// Affichage du joueur
-		ctx.fillStyle = this.playerColor;
-		ctx.fillRect(
+		// Affichage du joueur (version avec la couleur)
+		// ctx.fillStyle = this.playerColor;
+		// ctx.fillRect(
+		// 	player.col * this.cellSize + 2,
+		// 	player.row * this.cellSize + 2,
+		// 	this.cellSize - 4,
+		// 	this.cellSize - 4
+		// );
+
+		// Affichage du joueur et son avatar (version avec l'image)
+		this.playerImage.onload = () => {
+			ctx.drawImage(
+				this.playerImage,
+				player.col * this.cellSize + 2,
+				player.row * this.cellSize + 2,
+				this.cellSize - 4,
+				this.cellSize - 4
+			);
+		};
+
+		ctx.drawImage(
+			this.playerImage,
 			player.col * this.cellSize + 2,
 			player.row * this.cellSize + 2,
 			this.cellSize - 4,
@@ -337,13 +388,22 @@ class Maze {
 
 		// On affiche la sortie du labyrinthe seulement si tous les coffres ont été récupérés, donc si le tableau des coffres est vide
 		if (chests.length === 0) {
-			// La sortie du labyrinthe
-			ctx.fillStyle = this.endColor;
-			ctx.fillRect(
+			// Affichage de la sortie du labyrinthe (version avec la couleur)
+			// ctx.fillStyle = this.endColor;
+			// ctx.fillRect(
+			// 	(this.cols - 1) * this.cellSize,
+			// 	(this.rows - 1) * this.cellSize,
+			// 	this.cellSize,
+			// 	this.cellSize
+			// );
+
+			// Affichage de la sortie du labyrinthe (version avec l'image)
+			ctx.drawImage(
+				this.endImage,
 				(this.cols - 1) * this.cellSize,
 				(this.rows - 1) * this.cellSize,
-				this.cellSize,
-				this.cellSize
+				this.cellSize - 4,
+				this.cellSize - 4
 			);
 
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie en affichant le temps qu'il a mis pour terminer
@@ -371,7 +431,7 @@ function convertMinutesSecondsToSeconds(time) {
 	var seconds = +minutesSeconds[0] * 60 + +minutesSeconds[1];
 
 	// On soustrait le résultat avec le temps du minuteur initial (exemple : 120 (2minutes) - 100 (1minute40))
-	var secondsResult = minutesNumber - seconds;
+	var secondsResult = minutesNumber - seconds + 1;
 	var mins = Math.floor((secondsResult % 3600) / 60);
 	var secs = Math.floor(secondsResult % 60);
 
