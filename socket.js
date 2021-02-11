@@ -28,6 +28,12 @@ io.on("connection", (socket) => {
 	});
 });
 
+io.on("connection", function (socket) {
+	socket.on("adversaire", (data) => {
+		io.emit("adversaire", data);
+	});
+});
+
 http.listen(3000, () => {
 	console.log("listening on *:3000");
 });

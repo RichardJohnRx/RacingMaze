@@ -15,6 +15,7 @@ form.addEventListener("submit", function (e) {
 });
 
 socket.on("chat message", function (msg) {
+	console.log(msg);
 	var item = document.createElement("li");
 	item.textContent = msg;
 	messages.appendChild(item);
@@ -251,6 +252,7 @@ class Maze {
 		// On affiche le nombre total de coffres à l'écran (pour indiquer l'avancée de l'utilisateur)
 		document.getElementById("totalChests").innerHTML =
 			chestsFound + " / " + chests.length + " coffres trouvés";
+
 		this.redraw();
 	}
 
@@ -365,6 +367,23 @@ class Maze {
 				chestsFound + 1
 			);
 			chestsFound = chestsFound + 1;
+
+			// var item = document.createElement("li");
+			// item.textContent = msg;
+			// messages.appendChild(item);
+			// TESTS
+			var adversaire = document.getElementById("adversaire");
+
+			socket.emit("adversaire", chestsFound);
+
+			socket.on("adversaire", function (data) {
+				if (data > 1) {
+					adversaire.innerHTML = "Antonin : " + data + " coffres trouvés";
+				} else {
+					adversaire.innerHTML = "Antonin : " + data + " coffre trouvé";
+				}
+			});
+
 			// S'il reste encore des coffres dans le labyrinthe, on affiche combien il en reste dans une alerte pour lui indiquer son avancée
 			if (chests.length > 0) {
 				alert(
