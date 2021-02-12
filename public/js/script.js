@@ -33,6 +33,8 @@ let player;
 let chests = [];
 // Variable pour stocker le nombre de coffres récupérés par l'utilisateur (de base aucun coffre récupéré donc 0)
 let chestsFound = 0;
+// Variable pour stocker la position de la clé
+let key = [];
 
 // Variable pour gérer le countdown
 let monTimer;
@@ -264,6 +266,17 @@ class Maze {
 		document.getElementById("totalChests").innerHTML =
 			chestsFound + " / " + chests.length + " coffres trouvés";
 
+		// Génération d'une colonne et ligne aléatoire
+		let randomCol = Math.floor(Math.random() * this.cols);
+		let randomRow = Math.floor(Math.random() * this.rows);
+		// Boucle de condition pour que le coffre ne puisse pas être généré sur la case d'arrivée
+		while (randomCol === this.cols - 1 && randomRow === this.rows - 1) {
+			randomCol = Math.floor(Math.random() * this.cols);
+			randomRow = Math.floor(Math.random() * this.rows);
+		}
+		// On pousse la position de la clé dans le tableau dédié (variable globale)
+		key.push(this.cells[randomCol][randomRow]);
+
 		// Stocker les données de la génération du labyrinthe
 		// var mazeCells = JSON.stringify(this.cells);
 		// this.cells = JSON.parse(mazeCells);
@@ -420,8 +433,72 @@ class Maze {
 			// S'il n'y a plus de coffres à récupérer, il faut vite se diriger vers la sortie !
 			else {
 				alert(
-					"Bravo vous avez récupéré tous les coffres, dirigez-vous vite vers la sortie qui vient de s'ouvrir pour terminer la partie !"
+					"Bravo vous avez récupéré tous les coffres, allez vite récupérer la clé pour ouvrir la sortie !"
 				);
+			}
+		}
+
+		// S'il n'y a plus de coffre dans le labyrinthe et que la clé n'a pas encore été récupérée, on affiche la clé et la sortie
+		if (chests.length === 0 && key.length > 0) {
+			// Affichage de la position de la clé
+			ctx.drawImage(
+				this.keyImage,
+				key[0].col * this.cellSize + 2,
+				key[0].row * this.cellSize + 2,
+				this.cellSize - 4,
+				this.cellSize - 4
+			);
+
+			// Affichage de la sortie du labyrinthe (version avec l'image)
+			ctx.drawImage(
+				this.endImage,
+				(this.cols - 1) * this.cellSize,
+				(this.rows - 1) * this.cellSize,
+				this.cellSize - 4,
+				this.cellSize - 4
+			);
+
+			// Si le joueur essaye de sortir du labyrinthe sans avoir récupéré la clé (si la variable globale "key" n'est pas vide), on indique qu'il manque la clé
+			if (
+				player.col === this.cols - 1 &&
+				player.row === this.rows - 1 &&
+				typeof key !== "undefined" &&
+				key.length > 0
+			) {
+				alert("Il vous manque la clé pour pouvoir sortir !");
+			}
+
+			// On supprime de la clé lorsque le joueur passe dessus et on lui indique de se diriger vers la sortie
+			if (
+				key.find(
+					(element) => element.col === player.col && element.row === player.row
+				)
+			) {
+				var indexKey = key.indexOf(this.cells[player.col][player.row]);
+				key.splice(indexKey, 1);
+				alert("Tu as récupéré la clé ! Dirige toi vite vers la sortie !");
+			}
+		} else if (chests.length === 0) {
+			// Affichage de la sortie du labyrinthe (version avec l'image)
+			ctx.drawImage(
+				this.endImage,
+				(this.cols - 1) * this.cellSize,
+				(this.rows - 1) * this.cellSize,
+				this.cellSize - 4,
+				this.cellSize - 4
+			);
+
+			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie en ayant la clé en affichant aussi le temps qu'il a mis pour terminer
+			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
+				alert(
+					"Bravo ! Vous êtes sortis du labyrinthe ! Voici le temps que vous avez mis : " +
+						convertMinutesSecondsToSeconds(
+							document.getElementById("counter").innerHTML
+						)
+				);
+				// clearTimeout(monTimer);
+				// Arrêt du minuteur lorsqu'on sort du labyrinthe
+				clearInterval(monTimer);
 			}
 		}
 
@@ -463,38 +540,6 @@ class Maze {
 			// 	this.cellSize,
 			// 	this.cellSize
 			// );
-
-			// Affichage de la sortie du labyrinthe (version avec l'image)
-			ctx.drawImage(
-				this.endImage,
-				(this.cols - 1) * this.cellSize,
-				(this.rows - 1) * this.cellSize,
-				this.cellSize - 4,
-				this.cellSize - 4
-			);
-
-			if (this.cols === 3 && this.rows === 3) {
-			}
-			ctx.drawImage(
-				this.keyImage,
-				Math.floor(Math.random() * this.cols) * this.cellSize,
-				Math.floor(Math.random() * this.rows) * this.cellSize,
-				this.cellSize - 4,
-				this.cellSize - 4
-			);
-
-			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie en affichant le temps qu'il a mis pour terminer
-			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
-				alert(
-					"Bravo ! Vous êtes sortis du labyrinthe ! Voici le temps que vous avez mis : " +
-						convertMinutesSecondsToSeconds(
-							document.getElementById("counter").innerHTML
-						)
-				);
-				// clearTimeout(monTimer);
-				// Arrêt du minuteur lorsqu'on sort du labyrinthe
-				clearInterval(monTimer);
-			}
 		}
 	}
 }
