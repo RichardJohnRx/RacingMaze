@@ -253,6 +253,14 @@ class Maze {
 		document.getElementById("totalChests").innerHTML =
 			chestsFound + " / " + chests.length + " coffres trouvés";
 
+		// Stocker les données de la génération du labyrinthe
+		var oui = JSON.stringify(this.cells);
+
+		console.log(JSON.parse(oui));
+
+		this.cells = JSON.parse(oui);
+		//-----------------------------
+
 		this.redraw();
 	}
 
