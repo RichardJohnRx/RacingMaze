@@ -32,13 +32,15 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("maze", (data) => {
+		console.log(data);
 		io.emit("maze", data);
 	});
+
+	socket.on("chests", (data) => {
+		console.log(data);
+		io.emit("chests", data);
+	});
 });
-
-// io.on("connection", function (socket) {
-
-// });
 
 http.listen(3000, () => {
 	console.log("listening on *:3000");

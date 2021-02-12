@@ -91,6 +91,9 @@ class Maze {
 		this.chestImage = new Image();
 		this.chestImage.src = "images/chest.png";
 
+		this.keyImage = new Image();
+		this.keyImage.src = "images/key.png";
+
 		this.minutesNumber = minutesNumber;
 
 		// Vérifier si le labyrinthe existe déjà
@@ -262,14 +265,16 @@ class Maze {
 			chestsFound + " / " + chests.length + " coffres trouvés";
 
 		// Stocker les données de la génération du labyrinthe
-		var mazeCells = JSON.stringify(this.cells);
-		// console.log(mazeCells);
-
-		// console.log(JSON.parse(mazeCells));
-
-		this.cells = JSON.parse(mazeCells);
-
+		// var mazeCells = JSON.stringify(this.cells);
+		// this.cells = JSON.parse(mazeCells);
+		// console.log(this.cells);
 		socket.emit("maze", this.cells);
+
+		// Stocker les données de la génération des coffres
+		// var chestsCells = JSON.stringify(chests);
+		// chests = JSON.parse(chestsCells);
+		// console.log(chests);
+		socket.emit("chests", chests);
 
 		//-----------------------------
 
@@ -468,6 +473,16 @@ class Maze {
 				this.cellSize - 4
 			);
 
+			if (this.cols === 3 && this.rows === 3) {
+			}
+			ctx.drawImage(
+				this.keyImage,
+				Math.floor(Math.random() * this.cols) * this.cellSize,
+				Math.floor(Math.random() * this.rows) * this.cellSize,
+				this.cellSize - 4,
+				this.cellSize - 4
+			);
+
 			// Alerte pour montrer que le joueur a gagné lorsqu'il touche la sortie en affichant le temps qu'il a mis pour terminer
 			if (player.col === this.cols - 1 && player.row === this.rows - 1) {
 				alert(
@@ -625,15 +640,21 @@ function onLoad() {
 	// Nombre de coffres
 	var chest = 3;
 	// Durée en minutes du minuteur de la partie
-	var minutesNumber = 1;
-
+	var minutesNumber = 60;
 	// Savoir s'il y a déjà un labyrinthe existant
 	var mazeGenerated = [];
 
-	socket.on("maze", function (data) {
+	socket.on("maze", (data) => {
 		console.log(data);
 		mazeGenerated = data;
+		// console.log(mazeGenerated[0][0].southWall);
+		socket.on("chests", (data) => {
+			console.log(data);
+			chests = data;
+		});
 	});
+
+	console.log(mazeGenerated);
 
 	document.getElementById("menuFacile").checked = true;
 
