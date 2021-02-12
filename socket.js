@@ -26,13 +26,19 @@ io.on("connection", (socket) => {
 	socket.on("chat message", (msg) => {
 		io.emit("chat message", msg);
 	});
-});
 
-io.on("connection", function (socket) {
 	socket.on("adversaire", (data) => {
 		io.emit("adversaire", data);
 	});
+
+	socket.on("maze", (data) => {
+		io.emit("maze", data);
+	});
 });
+
+// io.on("connection", function (socket) {
+
+// });
 
 http.listen(3000, () => {
 	console.log("listening on *:3000");

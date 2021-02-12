@@ -263,11 +263,13 @@ class Maze {
 
 		// Stocker les données de la génération du labyrinthe
 		var mazeCells = JSON.stringify(this.cells);
-		console.log(mazeCells);
+		// console.log(mazeCells);
 
-		console.log(JSON.parse(mazeCells));
+		// console.log(JSON.parse(mazeCells));
 
 		this.cells = JSON.parse(mazeCells);
+
+		socket.emit("maze", this.cells);
 
 		//-----------------------------
 
@@ -626,160 +628,12 @@ function onLoad() {
 	var minutesNumber = 1;
 
 	// Savoir s'il y a déjà un labyrinthe existant
-	var mazeGenerated = [
-		[
-			{
-				col: 0,
-				row: 0,
-				eastWall: false,
-				northWall: true,
-				southWall: false,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 0,
-				row: 1,
-				eastWall: true,
-				northWall: false,
-				southWall: false,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 0,
-				row: 2,
-				eastWall: false,
-				northWall: false,
-				southWall: false,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 0,
-				row: 3,
-				eastWall: true,
-				northWall: false,
-				southWall: true,
-				westWall: true,
-				visited: true,
-			},
-		],
-		[
-			{
-				col: 1,
-				row: 0,
-				eastWall: true,
-				northWall: true,
-				southWall: false,
-				westWall: false,
-				visited: true,
-			},
-			{
-				col: 1,
-				row: 1,
-				eastWall: false,
-				northWall: false,
-				southWall: true,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 1,
-				row: 2,
-				eastWall: true,
-				northWall: true,
-				southWall: false,
-				westWall: false,
-				visited: true,
-			},
-			{
-				col: 1,
-				row: 3,
-				eastWall: true,
-				northWall: false,
-				southWall: true,
-				westWall: true,
-				visited: true,
-			},
-		],
-		[
-			{
-				col: 2,
-				row: 0,
-				eastWall: false,
-				northWall: true,
-				southWall: true,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 2,
-				row: 1,
-				eastWall: true,
-				northWall: true,
-				southWall: false,
-				westWall: false,
-				visited: true,
-			},
-			{
-				col: 2,
-				row: 2,
-				eastWall: true,
-				northWall: false,
-				southWall: false,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 2,
-				row: 3,
-				eastWall: false,
-				northWall: false,
-				southWall: true,
-				westWall: true,
-				visited: true,
-			},
-		],
-		[
-			{
-				col: 3,
-				row: 0,
-				eastWall: true,
-				northWall: true,
-				southWall: false,
-				westWall: false,
-				visited: true,
-			},
-			{
-				col: 3,
-				row: 1,
-				eastWall: true,
-				northWall: false,
-				southWall: false,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 3,
-				row: 2,
-				eastWall: true,
-				northWall: false,
-				southWall: false,
-				westWall: true,
-				visited: true,
-			},
-			{
-				col: 3,
-				row: 3,
-				eastWall: true,
-				northWall: false,
-				southWall: true,
-				westWall: false,
-				visited: true,
-			},
-		],
-	];
+	var mazeGenerated = [];
+
+	socket.on("maze", function (data) {
+		console.log(data);
+		mazeGenerated = data;
+	});
 
 	document.getElementById("menuFacile").checked = true;
 
