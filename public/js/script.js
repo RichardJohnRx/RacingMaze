@@ -249,7 +249,7 @@ class Maze {
 			let randomCol = Math.floor(Math.random() * this.cols);
 			let randomRow = Math.floor(Math.random() * this.rows);
 
-			// Boucle de condition pour que le coffre ne puisse pas être généré sur la case de départ, d'arrivée, et pas non plus sur une case déjà occupée par un autre coffre.
+			// Boucle de condition pour que le coffre ne puisse pas être généré sur la case de départ, d'arrivée, et pas non plus sur une case déjà occupée par un autre coffre
 			while (
 				(randomCol === 0 && randomRow === 0) ||
 				(randomCol === this.cols - 1 && randomRow === this.rows - 1) ||
@@ -269,8 +269,11 @@ class Maze {
 		// Génération d'une colonne et ligne aléatoire
 		let randomCol = Math.floor(Math.random() * this.cols);
 		let randomRow = Math.floor(Math.random() * this.rows);
-		// Boucle de condition pour que le coffre ne puisse pas être généré sur la case d'arrivée
-		while (randomCol === this.cols - 1 && randomRow === this.rows - 1) {
+		// Boucle de condition pour que le coffre ne puisse pas être généré sur la case d'arrivée et pas non plus sur une case déjà occupée par un autre coffre
+		while (
+			(randomCol === this.cols - 1 && randomRow === this.rows - 1) ||
+			chests.indexOf(this.cells[randomCol][randomRow]) !== -1
+		) {
 			randomCol = Math.floor(Math.random() * this.cols);
 			randomRow = Math.floor(Math.random() * this.rows);
 		}
