@@ -69,7 +69,7 @@ class MazeCell {
 }
 
 class Maze {
-	constructor(cols, rows, cellSize, chests, minutesNumber) {
+	constructor(cols, rows, cellSize, chests, minutesNumber, mazeGenerated) {
 		this.backgroundColor = "#ffffff";
 		this.cols = cols;
 		// this.endColor = "#88FF88";
@@ -93,9 +93,17 @@ class Maze {
 
 		this.minutesNumber = minutesNumber;
 
+		// Vérifier si le labyrinthe existe déjà
+		this.mazeGenerated = mazeGenerated;
+
 		this.cells = [];
 
-		this.generate();
+		if (typeof mazeGenerated !== "undefined" && mazeGenerated.length > 0) {
+			this.cells = mazeGenerated;
+			this.redraw();
+		} else {
+			this.generate();
+		}
 	}
 
 	generate() {
@@ -254,11 +262,13 @@ class Maze {
 			chestsFound + " / " + chests.length + " coffres trouvés";
 
 		// Stocker les données de la génération du labyrinthe
-		var oui = JSON.stringify(this.cells);
+		var mazeCells = JSON.stringify(this.cells);
+		console.log(mazeCells);
 
-		console.log(JSON.parse(oui));
+		console.log(JSON.parse(mazeCells));
 
-		this.cells = JSON.parse(oui);
+		this.cells = JSON.parse(mazeCells);
+
 		//-----------------------------
 
 		this.redraw();
@@ -615,6 +625,162 @@ function onLoad() {
 	// Durée en minutes du minuteur de la partie
 	var minutesNumber = 1;
 
+	// Savoir s'il y a déjà un labyrinthe existant
+	var mazeGenerated = [
+		[
+			{
+				col: 0,
+				row: 0,
+				eastWall: false,
+				northWall: true,
+				southWall: false,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 0,
+				row: 1,
+				eastWall: true,
+				northWall: false,
+				southWall: false,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 0,
+				row: 2,
+				eastWall: false,
+				northWall: false,
+				southWall: false,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 0,
+				row: 3,
+				eastWall: true,
+				northWall: false,
+				southWall: true,
+				westWall: true,
+				visited: true,
+			},
+		],
+		[
+			{
+				col: 1,
+				row: 0,
+				eastWall: true,
+				northWall: true,
+				southWall: false,
+				westWall: false,
+				visited: true,
+			},
+			{
+				col: 1,
+				row: 1,
+				eastWall: false,
+				northWall: false,
+				southWall: true,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 1,
+				row: 2,
+				eastWall: true,
+				northWall: true,
+				southWall: false,
+				westWall: false,
+				visited: true,
+			},
+			{
+				col: 1,
+				row: 3,
+				eastWall: true,
+				northWall: false,
+				southWall: true,
+				westWall: true,
+				visited: true,
+			},
+		],
+		[
+			{
+				col: 2,
+				row: 0,
+				eastWall: false,
+				northWall: true,
+				southWall: true,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 2,
+				row: 1,
+				eastWall: true,
+				northWall: true,
+				southWall: false,
+				westWall: false,
+				visited: true,
+			},
+			{
+				col: 2,
+				row: 2,
+				eastWall: true,
+				northWall: false,
+				southWall: false,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 2,
+				row: 3,
+				eastWall: false,
+				northWall: false,
+				southWall: true,
+				westWall: true,
+				visited: true,
+			},
+		],
+		[
+			{
+				col: 3,
+				row: 0,
+				eastWall: true,
+				northWall: true,
+				southWall: false,
+				westWall: false,
+				visited: true,
+			},
+			{
+				col: 3,
+				row: 1,
+				eastWall: true,
+				northWall: false,
+				southWall: false,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 3,
+				row: 2,
+				eastWall: true,
+				northWall: false,
+				southWall: false,
+				westWall: true,
+				visited: true,
+			},
+			{
+				col: 3,
+				row: 3,
+				eastWall: true,
+				northWall: false,
+				southWall: true,
+				westWall: false,
+				visited: true,
+			},
+		],
+	];
+
 	document.getElementById("menuFacile").checked = true;
 
 	// Condition pour vérifier que le nombre de coffres n'est pas trop élevé
@@ -623,7 +789,7 @@ function onLoad() {
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
 		);
 	} else {
-		maze = new Maze(col, row, size, chest, minutesNumber);
+		maze = new Maze(col, row, size, chest, minutesNumber, mazeGenerated);
 	}
 	document.getElementById("quitterPartie").onclick = function () {
 		alert("YES quitter");
