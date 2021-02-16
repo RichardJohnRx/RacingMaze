@@ -75,9 +75,10 @@ class Maze {
 	}
 
 	generate() {
-		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe
+		// On vide d'abord le tableau des coffres pour éviter qu'ils se cumulent à l'infini lorsqu'on génère un nouveau labyrinthe, de même pour la clé
 		chests = [];
 		chestsFound = 0;
+		key = [];
 
 		// On vide le timer pour ne pas accumuler les minuteurs
 		clearInterval(monTimer);
