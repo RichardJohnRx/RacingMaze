@@ -100,13 +100,16 @@ class Maze {
 
 		// Vérifier si le labyrinthe existe déjà
 		this.mazeGenerated = mazeGenerated;
+		console.log(mazeGenerated);
 
 		this.cells = [];
 
 		if (typeof mazeGenerated !== "undefined" && mazeGenerated.length > 0) {
 			this.cells = mazeGenerated;
+			console.log("redraw");
 			this.redraw();
 		} else {
+			console.log("generate");
 			this.generate();
 		}
 	}
@@ -218,7 +221,7 @@ class Maze {
 
 		// Fonction pour chronométrer le temps de la partie (minuteur) :
 		function startTimer(duration, display) {
-			var timer = duration,
+			let timer = duration,
 				minutes,
 				seconds;
 
@@ -269,7 +272,7 @@ class Maze {
 		// Génération d'une colonne et ligne aléatoire
 		let randomCol = Math.floor(Math.random() * this.cols);
 		let randomRow = Math.floor(Math.random() * this.rows);
-		// Boucle de condition pour que le coffre ne puisse pas être généré sur la case d'arrivée et pas non plus sur une case déjà occupée par un autre coffre
+		// Boucle de condition pour que la clé ne puisse pas être générée sur la case d'arrivée et pas non plus sur une case déjà occupée par un coffre
 		while (
 			(randomCol === this.cols - 1 && randomRow === this.rows - 1) ||
 			chests.indexOf(this.cells[randomCol][randomRow]) !== -1
@@ -284,6 +287,7 @@ class Maze {
 		// var mazeCells = JSON.stringify(this.cells);
 		// this.cells = JSON.parse(mazeCells);
 		// console.log(this.cells);
+
 		socket.emit("maze", this.cells);
 
 		// Stocker les données de la génération des coffres
@@ -372,7 +376,7 @@ class Maze {
 
 		// Affichage des coffres à partir du tableau "chests" (version avec l'image)
 		this.chestImage.onload = () => {
-			for (var chest in chests) {
+			for (let chest in chests) {
 				ctx.drawImage(
 					this.chestImage,
 					chests[chest].col * this.cellSize + 2,
@@ -383,7 +387,7 @@ class Maze {
 			}
 		};
 
-		for (var chest in chests) {
+		for (let chest in chests) {
 			ctx.drawImage(
 				this.chestImage,
 				chests[chest].col * this.cellSize + 2,
@@ -399,7 +403,7 @@ class Maze {
 				(element) => element.col === player.col && element.row === player.row
 			)
 		) {
-			var indexChest = chests.indexOf(this.cells[player.col][player.row]);
+			let indexChest = chests.indexOf(this.cells[player.col][player.row]);
 			chests.splice(indexChest, 1);
 			// On actualise le nombre de coffres trouvés en rajoutant + 1 à la variable globale "chestsFound" et on modifie le suivi (pour indiquer l'avancée de l'utilisateur)
 			let totalChests = document.getElementById("totalChests");
@@ -413,7 +417,7 @@ class Maze {
 			// item.textContent = msg;
 			// messages.appendChild(item);
 			// TESTS
-			var adversaire = document.getElementById("adversaire");
+			let adversaire = document.getElementById("adversaire");
 
 			socket.emit("adversaire", chestsFound);
 
@@ -551,17 +555,17 @@ class Maze {
 function convertMinutesSecondsToSeconds(time) {
 	// On récupère les minutes + secondes
 	// On enlève les ":"
-	var minutesSeconds = time.split(":");
+	let minutesSeconds = time.split(":");
 	// On convertit les minutes en secondes et on les additionne avec le reste des secondes
-	var seconds = +minutesSeconds[0] * 60 + +minutesSeconds[1];
+	let seconds = +minutesSeconds[0] * 60 + +minutesSeconds[1];
 
 	// On soustrait le résultat avec le temps du minuteur initial (exemple : 120 (2minutes) - 100 (1minute40))
-	var secondsResult = minutesNumber - seconds + 1;
-	var mins = Math.floor((secondsResult % 3600) / 60);
-	var secs = Math.floor(secondsResult % 60);
+	let secondsResult = minutesNumber - seconds + 1;
+	let mins = Math.floor((secondsResult % 3600) / 60);
+	let secs = Math.floor(secondsResult % 60);
 
 	// Conversion des secondes en un format plus lisible pour l'utilisateur
-	var result = "";
+	let result = "";
 
 	if (mins <= 0) {
 		result += "" + secs + " secondes";
@@ -680,29 +684,36 @@ function onLoad() {
 	player = new Player();
 
 	// Nombre de colonnes
-	var col = 4;
+	let col = 4;
 	// Nombre de lignes
-	var row = 4;
+	let row = 4;
 	// Taille des cellules
-	var size = 50;
+	let size = 50;
 	// Nombre de coffres
-	var chest = 3;
+	let chest = 3;
 	// Durée en minutes du minuteur de la partie
-	var minutesNumber = 60;
+	let minutesNumber = 60;
 	// Savoir s'il y a déjà un labyrinthe existant
-	var mazeGenerated = [];
+	let mazeGenerated = [];
 
 	socket.on("maze", (data) => {
 		console.log(data);
 		mazeGenerated = data;
 		// console.log(mazeGenerated[0][0].southWall);
 		socket.on("chests", (data) => {
-			console.log(data);
+			// console.log(chest);
+			console.log("ok");
 			chests = data;
+
+			callback(mazeGenerated, chests);
 		});
 	});
 
-	console.log(mazeGenerated);
+	function callback(mazeGenerated, chests) {
+		console.log(mazeGenerated);
+		console.log(chests);
+		maze = new Maze(col, row, size, chests, minutesNumber, mazeGenerated);
+	}
 
 	document.getElementById("menuFacile").checked = true;
 
@@ -712,6 +723,7 @@ function onLoad() {
 			"Impossible d'avoir plus de coffres que de cellules moins celle de l'arrivée et de départ."
 		);
 	} else {
+		console.log("pas ok");
 		maze = new Maze(col, row, size, chest, minutesNumber, mazeGenerated);
 	}
 	document.getElementById("quitterPartie").onclick = function () {

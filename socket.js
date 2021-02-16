@@ -31,14 +31,20 @@ io.on("connection", (socket) => {
 		io.emit("adversaire", data);
 	});
 
+	socket.on("create", function (room) {
+		socket.join(room);
+	});
+
 	socket.on("maze", (data) => {
-		console.log(data);
-		io.emit("maze", data);
+		// console.log(data);
+		socket.broadcast.emit("maze", data);
+		// io.emit("maze", data);
 	});
 
 	socket.on("chests", (data) => {
 		console.log(data);
-		io.emit("chests", data);
+		socket.broadcast.emit("chests", data);
+		// io.emit("chests", data);
 	});
 });
 
