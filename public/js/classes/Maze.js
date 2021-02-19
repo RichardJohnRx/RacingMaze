@@ -98,11 +98,11 @@ class Maze {
 			}
 		}
 
-		let rndCol = Math.floor(Math.random() * this.cols);
-		let rndRow = Math.floor(Math.random() * this.rows);
+		let randomColCell = Math.floor(Math.random() * this.cols);
+		let randomRowCell = Math.floor(Math.random() * this.rows);
 
 		let stack = [];
-		stack.push(this.cells[rndCol][rndRow]);
+		stack.push(this.cells[randomColCell][randomRowCell]);
 
 		let currCell;
 		let dir;
@@ -209,42 +209,46 @@ class Maze {
 
 		// Fonction pour générer autant de coffres que demandé et chacun à une position aléatoire que l'on stocke dans le tableau "chests"
 		for (let chest = 0; chest < this.chests; chest++) {
-			// Génération d'une colonne et ligne aléatoire
-			let randomCol = Math.floor(Math.random() * this.cols);
-			let randomRow = Math.floor(Math.random() * this.rows);
+			// Génération d'une colonne et ligne aléatoire pour la position de chaque coffre
+			let randomColChest = Math.floor(Math.random() * this.cols);
+			let randomRowChest = Math.floor(Math.random() * this.rows);
 
 			// Boucle de condition pour que le coffre ne puisse pas être généré sur la case de départ, d'arrivée, et pas non plus sur une case déjà occupée par un autre coffre
 			while (
-				(randomCol === 0 && randomRow === 0) ||
-				(randomCol === this.cols - 1 && randomRow === this.rows - 1) ||
-				chests.indexOf(this.cells[randomCol][randomRow]) !== -1
+				(randomColChest === 0 && randomRowChest === 0) ||
+				(randomColChest === this.cols - 1 &&
+					randomRowChest === this.rows - 1) ||
+				chests.indexOf(this.cells[randomColChest][randomRowChest]) !== -1
 			) {
-				randomCol = Math.floor(Math.random() * this.cols);
-				randomRow = Math.floor(Math.random() * this.rows);
+				randomColChest = Math.floor(Math.random() * this.cols);
+				randomRowChest = Math.floor(Math.random() * this.rows);
 			}
 
 			// On pousse la position du coffre dans le tableau dédié (variable globale)
-			chests.push(this.cells[randomCol][randomRow]);
+			chests.push(this.cells[randomColChest][randomRowChest]);
 		}
 		// On affiche le nombre total de coffres à l'écran (pour indiquer l'avancée de l'utilisateur)
 		document.getElementById("totalChests").innerHTML =
 			chestsFound + " / " + chests.length + " coffres trouvés";
 
-		// Génération d'une colonne et ligne aléatoire
-		let randomCol = Math.floor(Math.random() * this.cols);
-		let randomRow = Math.floor(Math.random() * this.rows);
+		// Génération d'une colonne et ligne aléatoire pour la position de la clé
+		let randomColKey = Math.floor(Math.random() * this.cols);
+		let randomRowKey = Math.floor(Math.random() * this.rows);
 		// Boucle de condition pour que la clé ne puisse pas être générée sur la case d'arrivée et pas non plus sur une case déjà occupée par un coffre
 		while (
-			(randomCol === this.cols - 1 && randomRow === this.rows - 1) ||
-			chests.indexOf(this.cells[randomCol][randomRow]) !== -1
+			(randomColKey === this.cols - 1 && randomRowKey === this.rows - 1) ||
+			chests.indexOf(this.cells[randomColKey][randomRowKey]) !== -1
 		) {
-			randomCol = Math.floor(Math.random() * this.cols);
-			randomRow = Math.floor(Math.random() * this.rows);
+			randomColKey = Math.floor(Math.random() * this.cols);
+			randomRowKey = Math.floor(Math.random() * this.rows);
 		}
 		// On pousse la position de la clé dans le tableau dédié (variable globale)
-		key.push(this.cells[randomCol][randomRow]);
+		key.push(this.cells[randomColKey][randomRowKey]);
+		// console.log(key[0].col);
+		// console.log(key[0].row);
 
 		// Stocker les données de la génération du labyrinthe
+		// console.log(JSON.stringify(this.cells));
 		// var mazeCells = JSON.stringify(this.cells);
 		// this.cells = JSON.parse(mazeCells);
 		// console.log(this.cells);
